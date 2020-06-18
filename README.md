@@ -19,6 +19,6 @@ npm run serve
 
 ### Start api
 ```
-python(3) api
+python(3) api.py
 ```
 
