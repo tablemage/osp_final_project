@@ -5,7 +5,11 @@
             color="indigo"
             dark
     >
-      <v-toolbar-title>Python Url Analysis</v-toolbar-title>
+
+        <v-toolbar-title>
+          <router-link to="/" style="color : #ffffff; text-decoration: none;"> Python Url Analysis </router-link>
+        </v-toolbar-title>
+
     </v-app-bar>
 
     <v-content>

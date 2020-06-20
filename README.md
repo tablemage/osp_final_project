@@ -1,18 +1,24 @@
-# osp_final_project
-
-This project was made for final exam of open source programming lecture.
-
-
 # flask
 
 ## Project setup
 ```
-npm install
+yarn install
 ```
 
 ### Compiles and hot-reloads for development
 ```
-npm run serve
+yarn serve
+```
+
+### Compiles and minifies for production
+```
+yarn build
+```
+
+### Lints and fixes files
+```
+yarn lint
+
 ```
 
 # api
@@ -21,4 +27,10 @@ npm run serve
 ```
 python(3) api.py
 ```
+
+# osp_final_project
+
+This project was made for final exam of open source programming lecture.
+
+
 
