@@ -30,7 +30,7 @@
             <v-card>
                 <v-card-title class="headline">단어분석</v-card-title>
                 <v-card-text>
-                    {{list}}
+                    {{wordDialog.data}}
                 </v-card-text>
                 <v-card-actions>
                     <v-btn @click="wordDialog.status=false">닫기</v-btn>

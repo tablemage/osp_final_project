@@ -18,6 +18,8 @@ api = Api(app)
 # 반환하는 방법이 훨씬 편해서 사용하는 임시 데이터 변수입니다.
 # 제발 디비에 ID값과 같은 것으로 웹 - 서버 - 디비 연동되어야합니다. 
 tempPostData = ''
+PostData  = ""
+tfidf_result = ""
 
 # 모든 클래스는 각각의 url을 DB에 보내서 존재하는 값인지 확인해야함
 # 존재하는 값이면 그 데이터를 불러와서 반환하고
@@ -110,6 +112,7 @@ class fileReceived(Resource):
 class fileListTransfer(Resource):
     def post(self):
         print("fileListTransfer")
+        global PostData, tfidf_result
         whole_word_info = []  # 각 url 총단어 저장
         url = []
         status = []
@@ -167,22 +170,37 @@ class fileListTransfer(Resource):
 
         #tf-idf 계산
         vocab, tfidf = tfidf_weighting(whole_word_info)
-        print(len(vocab))
-        print(tfidf.shape)
 
+        #sim 계산
+        sim_mat = np.zeros((tfidf.shape[0],tfidf.shape[0]))
+        for i in range(tfidf.shape[0]):
+            for j in range(tfidf.shape[0]):
+                sim_mat[i][j] = np.dot(tfidf[i], tfidf[j])/(np.linalg.norm(tfidf[i])*np.linalg.norm(tfidf[j]))
 
         result = {
             'status' : '200',
             'list' : []
         }
+
         for i in range(count):
-            token_idx_list = np.argsort(tfidf[i])[:10]
+            token_idx_list = np.flip(np.argsort(tfidf[i]))[:10]
             tmp = []
             for idx in token_idx_list:
                 tmp.append(vocab[idx])
-            result['list'].append( { 'url' : url[i], 'doc' : tmp, 'count' : word_num[i], 'resTime'  : result_time[i]})  
 
-                
+            sim_tmp = []
+            sim_value = []
+            sim_idx_list = np.flip(np.argsort(sim_mat[i]))[1:4]
+            for idx in sim_idx_list:
+                sim_tmp.append(url[idx])
+                sim_value.append(sim_mat[i][idx])
+
+
+            result['list'].append( { 'url' : url[i], 'doc' : tmp,'simurl':sim_tmp,'sim':sim_value, 'count' : word_num[i], 'resTime'  : result_time[i]})  
+
+        PostData=result
+        tfidf_result = tfidf
+
         return result
 
 
@@ -242,7 +260,7 @@ class urlOnlyTransfer(Resource):
 
 class wordAnalysis(Resource):
     def post(self):
-
+        global PostData
         print("wordAnalysis")
         result = {
             'status' : '200',
@@ -253,20 +271,43 @@ class wordAnalysis(Resource):
         parser.add_argument('url', type=str)
         args = parser.parse_args()
         print(args)
-        result['list']['url'] = args['url']
-
-        print(result)
-
-
+        print(args['url'])
+        for data in PostData['list']:
+            if data["url"] == args['url']:
+                result['list'] = data["doc"]
 
         return result
+
+class simAnalysis(Resource):
+    def post(self):
+        global tfidf_result
+        print("simAnalysis")
+        result = {
+            'status' : '200',
+            'list' : []
+        }
+
+        parser = reqparse.RequestParser()
+        parser.add_argument('url', type=str)
+        args = parser.parse_args()
+        idx = 1
+
+        for data in PostData['list']:
+            if data["url"] == args['url']:
+                for i, u in enumerate(data["simurl"]):
+                    result['list'].append({'index':idx, 'data':data["sim"][i], 'url':u})
+                    idx += 1
+
+        return result
+
+
 
 #localhost:5000/{{router}} 와 같은식으로 주소로 데이터를 받은경우 실행
 api.add_resource(urlReceived, '/url')
 api.add_resource(fileReceived, '/file')
 api.add_resource(fileListTransfer, '/filelist') 
 api.add_resource(urlOnlyTransfer, '/onlyurl')
-
+api.add_resource(simAnalysis,'/sim')
 api.add_resource(wordAnalysis, '/word')
 
 
