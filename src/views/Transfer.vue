@@ -85,7 +85,7 @@
             }
         },
         mounted(){
-            if( typeof this.$route.params.url !== 'undefined' && this.$route.params.url) {
+            if( typeof this.$route.params.url !== 'undefined' && this.$route.params.url!='filelist') {
                 axios
                     .post('/onlyurl')
                     .then((result)=> {
@@ -99,10 +99,14 @@
                     })
 
             }else{
+                console.log("file")
                 axios
                     .post('/filelist')
                     .then((result)=> {
                         this.list = result.data.list
+                        console.log(result)
+                        console.log(this.list)
+                        this.simCheck = true
                     })
                     .catch((e)=> {
                         console.log(e)
@@ -116,6 +120,7 @@
                     .then((result)=> {
                         console.log(result)
                         this.wordDialog.data = result.data.list
+                        console.log(result.data.list)
                     })
                     .catch((e)=> {
                         console.log(e)

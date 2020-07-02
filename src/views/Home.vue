@@ -77,7 +77,7 @@
                     }
                 }).then(()=>{
                     alert('입력이 완료되었습니다.')
-                    this.$router.push('/transfer/')
+                    this.$router.push('/transfer/filelist')
                 }).catch((error) => {
                     console.log(error)
                 });
