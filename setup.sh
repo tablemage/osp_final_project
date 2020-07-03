@@ -14,4 +14,5 @@ echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee/etc/apt/sources
 
 sudo apt update 
 sudo apt install yarn
+yarn install
 python3 api.py&yarn serve
