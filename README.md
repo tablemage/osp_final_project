@@ -16,6 +16,3 @@ Then run https://localhost:8080 on your crome browser.
 # osp_final_project
 
 This project was made for final exam of open source programming lecture.
-
-
-

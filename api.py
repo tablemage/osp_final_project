@@ -14,25 +14,12 @@ from nltk.tokenize import word_tokenize
 
 app = Flask(__name__)
 api = Api(app)
-# url을 get방식으로 변환하는것보다 post방식으로 변환한다음
-# 반환하는 방법이 훨씬 편해서 사용하는 임시 데이터 변수입니다.
-# 제발 디비에 ID값과 같은 것으로 웹 - 서버 - 디비 연동되어야합니다. 
+
 tempPostData = ''
 PostData  = ""
 tfidf_result = ""
 
-# 모든 클래스는 각각의 url을 DB에 보내서 존재하는 값인지 확인해야함
-# 존재하는 값이면 그 데이터를 불러와서 반환하고
-# 존재하지 않는 값이면 프로그램을 통해 계산한 뒤에 데이터베이스에 입력해야함.
 
-# 모든 데이터 베이스는 idx값을 등록해놓고 이를 사용하는것이 좋음
-# 근데 idx값을 사용할지 안할지 모르니 url 값을 index값으로 사용하는 방식으로 짯음
-
-# 전체적으로 index값을 기반으로 데이터를 주고받는게 좋아보이나 할수없으면 걍 url  로 하셈
-
-# 그리고 중복체크는 제발 디비에서 검색해서 검색값이 NULL이나 공백이면 체크하는방식으로 디비쪽에서 해야함
-# 안읽는거같아서 쓰는데 일단 url 을 받으면 그 url이랑 텍스트 분석결과를 디비에 저장하고 index 값을 반환해주는거임
-# 그 index 값으로 호출하면 반환받은 데이터를 다시 분석돌리는거
 
 
 
@@ -77,10 +64,7 @@ def tfidf_weighting(docs):
 
     return vocab, tfidf
 
-# 모두다 설명해 드림 url  받아서 idx 값이나 db index값을 넘기세요
-#그러면 그 index값을 반환해서 웹으로 넘겨요 
-# 그럼 웹에서 그 index 값을 가지고 페이지를 넘긴다음에 이를 기반으로 데이터를 조회할 거예요
-# return 에 url이 아니고 index를 반환해줘야해요
+
 class urlReceived(Resource):
     def post(self):
         print("urlReceived")
@@ -92,9 +76,7 @@ class urlReceived(Resource):
 
         return {'url': args['urlName']}
 
-# 파일 데이터를 받았을때 사용하는 클래스
-# 파일 일단 저장하는 클래스임
-# 원래라면 파일이름 저장해서 이걸 반환해야하는데 
+ 
 class fileReceived(Resource):
     def post(self):
         print("fileReceived")
@@ -107,8 +89,7 @@ class fileReceived(Resource):
         return {'status' : '200'}
 
 
-#이 클래스를 이용해서 파일 리스트를 읽어서 데이터를 반납하면 됨
-# 유사성 분석 프로그램 짜서 여기다 넣고 반환하세요 JSON으로하셔야합니다
+
 class fileListTransfer(Resource):
     def post(self):
         print("fileListTransfer")
@@ -152,7 +133,7 @@ class fileListTransfer(Resource):
                     result_time.append("-")
             count = len(url)
             print(count)
-            # 이건 디비값이랑 연동해서 돌리셈
+    
             for i in range(0, count):
                 check = 0
                 for j in range(0, count):
@@ -204,12 +185,7 @@ class fileListTransfer(Resource):
         return result
 
 
-# url 단일일때 사용하는 클래스
-# 여기도 프로그램 돌려야함.
-# 운래는 tempPostData는 웹으로 부터 받는 index 값이 여야 합니다.
-# 제발 이거보고 이거 기준으로 코드 짜세요 그리고 변수 전역으로 쓰지마세요 제발.. 
-# 디비로부터 데이터 주고받으면서 해야합니다.
-# 그리고 여기는 단일인데 리스트를 쓸필요가있나?
+
 class urlOnlyTransfer(Resource):
     def post(self):
         print("urlOnlyTransfer")
@@ -244,19 +220,11 @@ class urlOnlyTransfer(Resource):
             'list' : []
         }
         result['list'].append( { 'url' : url, 'doc' : word_doc, 'count' : tmp, 'resTime'  : result_time[0]}) 
-        
-        # url : url , doc : 전체단어 리스트 , count : 전체 단어 개수 , resTime : 응답시간 
-        # 전체 단어리스트가 원래는 TF-IDF 기반 함수로 상위 TOP10 주요 단어 리스트 생성한거여야함.
-        # 전체 단어리스트 웹으로 출력하라는 내용이 있었나?
-        #그리고 여기다가 status 값을 넣어서 이걸로 중복 신규 처리불가 이걸 추가해줘야함.
-        #유사성 분석 완성하면 FILE TRANSFER 쪽 배열에다 유사성 분석 데이터 첨부해서 넣으세요
-        #json데이터형식이 DICTIONARY 형식인데 그정돈 할줄알잖아요 안그래요?
+
         return result
 
 
-#단어 분석용
-#여기도 돌리셈
-#url 받아서 TF-IDF 기반 함수 정의 -> 상위 top10 주요 단어 리스트 생성 (단어 분석 버튼)
+
 
 class wordAnalysis(Resource):
     def post(self):
