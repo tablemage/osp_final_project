@@ -1,36 +1,18 @@
 # flask
 
+
 ## Project setup
 ```
-yarn install
+clone master branch to your local computer.
 ```
 
-### Compiles and hot-reloads for development
+## Start program
 ```
-yarn serve
-```
+Start setup.sh by 'source setup.sh'(before start, use 'chmod +x setup.sh' command to change file permission.
 
-### Compiles and minifies for production
-```
-yarn build
-```
-
-### Lints and fixes files
-```
-yarn lint
-
-```
-
-# api
-
-### Start api
-```
-python(3) api.py
+Then run https://localhost:8080 on your crome browser.
 ```
 
 # osp_final_project
 
 This project was made for final exam of open source programming lecture.
-
-
-
